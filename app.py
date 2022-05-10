@@ -11,7 +11,8 @@ import time
 import pyttsx3
 from dotenv import load_dotenv  # загрузка информации из .env-файла
 from pyowm import OWM  # использование OpenWeatherMap для получения данных о погоде
-from termcolor import colored  # вывод цветных логов (для выделения распознанной речи)
+# вывод цветных логов (для выделения распознанной речи)
+from termcolor import colored
 
 tts = pyttsx3.init()
 
@@ -24,6 +25,7 @@ def callback(indata, frames, time, status):
     if status:
         print(status, file=sys.stderr)
     q.put(bytes(indata))
+
 
 def get_weather_info():
     weather_api_key = os.getenv("WEATHER_API_KEY")
@@ -38,7 +40,8 @@ def get_weather_info():
     status = weather.detailed_status
     temperature = weather.temperature('celsius')["temp"]
     wind_speed = weather.wind()["speed"]
-    pressure = int(weather.pressure["press"] / 1.333)  # переведено из гПА в мм рт.ст.
+    # переведено из гПА в мм рт.ст.
+    pressure = int(weather.pressure["press"] / 1.333)
 
     # вывод логов
     print(colored("Weather in Moscow" +
@@ -47,7 +50,8 @@ def get_weather_info():
                   "\n * Temperature (Celsius): " + str(temperature) +
                   "\n * Pressure (mm Hg): " + str(pressure), "yellow"))
 
-    speak("Температура воздуха в Москве " + str(round(temperature)) + " градусов Цельсия")
+    speak("Температура воздуха в Москве " +
+          str(round(temperature)) + " градусов Цельсия")
     speak("Скорость ветра " + str(round(wind_speed)) + " метров в секунду")
     speak("Давление " + str(pressure) + " миллиметра ртутного столба")
 
@@ -90,14 +94,16 @@ if __name__ == '__main__':
 
     voices = tts.getProperty('voices')
 
-# Задать голос по умолчанию
-tts.setProperty('voice', 'ru')
+    # Задать голос по умолчанию
+    tts.setProperty('voice', 'ru')
 
-load_dotenv()
+    load_dotenv()
 
-while True:
-    text = listen()
-    if "погод" in text:
-        get_weather_info()
-    else:    
-        speak(text)
+    while True:
+        
+        text = listen()
+
+        if "погод" in text:
+            get_weather_info()
+        else:
+            speak(text)
