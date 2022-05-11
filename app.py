@@ -17,7 +17,7 @@ from termcolor import colored
 tts = pyttsx3.init()
 
 model = vosk.Model(
-    "C:\\PycharmProjects\\Speech2Text\\vosk-model-small-ru-0.22")
+    "C:\\PythonProjects\\My-Personal-Assitant\\vosk-model-small-ru-0.22")
 
 
 def callback(indata, frames, time, status):
