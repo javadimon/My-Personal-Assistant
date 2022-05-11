@@ -32,7 +32,7 @@ def get_weather_info():
     open_weather_map = OWM(weather_api_key)
 
     weather_manager = open_weather_map.weather_manager()
-    observation = weather_manager.weather_at_place("Moscow")
+    observation = weather_manager.weather_at_place(os.getenv("CITY"))
     weather = observation.weather
 
     status = weather.detailed_status
@@ -41,13 +41,13 @@ def get_weather_info():
     pressure = int(weather.pressure["press"] / 1.333)
 
     # вывод логов
-    print(colored("Weather in Moscow" +
+    print(colored("Weather in " + os.getenv("CITY") +
                   ":\n * Status: " + status +
                   "\n * Wind speed (m/sec): " + str(wind_speed) +
                   "\n * Temperature (Celsius): " + str(temperature) +
                   "\n * Pressure (mm Hg): " + str(pressure), "yellow"))
 
-    speak("Температура воздуха в Москве " +
+    speak("Температура воздуха в городе " + os.getenv("CITY_RUS") +
           str(round(temperature)) + " градусов Цельсия")
     speak("Скорость ветра " + str(round(wind_speed)) + " метров в секунду")
     speak("Давление " + str(pressure) + " миллиметра ртутного столба")
