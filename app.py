@@ -31,16 +31,13 @@ def get_weather_info():
     weather_api_key = os.getenv("WEATHER_API_KEY")
     open_weather_map = OWM(weather_api_key)
 
-    # запрос данных о текущем состоянии погоды
     weather_manager = open_weather_map.weather_manager()
     observation = weather_manager.weather_at_place("Moscow")
     weather = observation.weather
 
-    # разбивание данных на части для удобства работы с ними
     status = weather.detailed_status
     temperature = weather.temperature('celsius')["temp"]
     wind_speed = weather.wind()["speed"]
-    # переведено из гПА в мм рт.ст.
     pressure = int(weather.pressure["press"] / 1.333)
 
     # вывод логов
@@ -85,6 +82,8 @@ def listen():
         exit("Fatal error" + ": " + str(e))
 
 
+is_working_mode = False
+
 if __name__ == '__main__':
     rate = tts.getProperty('rate')  # Скорость произношения
     tts.setProperty('rate', rate-40)
@@ -100,10 +99,19 @@ if __name__ == '__main__':
     load_dotenv()
 
     while True:
-        
+
         text = listen()
 
-        if "погод" in text:
-            get_weather_info()
-        else:
-            speak(text)
+        if "очнись" in text:
+            is_working_mode = True
+            speak("Слушаю")
+            continue
+
+        if "отбой" in text:
+            is_working_mode = False
+            speak("Отключаюсь")
+            continue
+
+        if is_working_mode:
+           if "погод" in text:
+               get_weather_info()
