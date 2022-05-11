@@ -34,9 +34,11 @@ def get_weather_info():
     weather_manager = open_weather_map.weather_manager()
     observation = weather_manager.weather_at_place(os.getenv("CITY"))
     weather = observation.weather
+    print(weather)
 
     status = weather.detailed_status
     temperature = weather.temperature('celsius')["temp"]
+    temperature_feels_like = weather.temperature('celsius')["feels_like"]
     wind_speed = weather.wind()["speed"]
     pressure = int(weather.pressure["press"] / 1.333)
 
@@ -49,6 +51,7 @@ def get_weather_info():
 
     speak("Температура воздуха в городе " + os.getenv("CITY_RUS") +
           str(round(temperature)) + " градусов Цельсия")
+    speak("Ощущается как " + str(round(temperature_feels_like)) + " градусов Цельсия")
     speak("Скорость ветра " + str(round(wind_speed)) + " метров в секунду")
     speak("Давление " + str(pressure) + " миллиметра ртутного столба")
 
