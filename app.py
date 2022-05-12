@@ -8,13 +8,13 @@ import vosk
 import sys
 import json
 import time
-import pyttsx3
+
+import speaker
+import speaker as sreaker
 from dotenv import load_dotenv  # загрузка информации из .env-файла
 from pyowm import OWM  # использование OpenWeatherMap для получения данных о погоде
 # вывод цветных логов (для выделения распознанной речи)
 from termcolor import colored
-
-tts = pyttsx3.init()
 
 model = vosk.Model(
     "C:\\PythonProjects\\My-Personal-Assitant\\vosk-model-small-ru-0.22")
@@ -49,25 +49,18 @@ def get_weather_info():
                   "\n * Temperature (Celsius): " + str(temperature) +
                   "\n * Pressure (mm Hg): " + str(pressure), "yellow"))
 
-    speak("Температура воздуха в городе " + os.getenv("CITY_RUS") +
-          str(round(temperature)) + " градусов Цельсия")
-    speak("Ощущается как " + str(round(temperature_feels_like)) + " градусов Цельсия")
-    speak("Скорость ветра " + str(round(wind_speed)) + " метров в секунду")
-    speak("Давление " + str(pressure) + " миллиметра ртутного столба")
-
-
-def speak(text):
-    tts.say(text)
-    tts.runAndWait()
+    speaker.speak("Температура воздуха в городе " + os.getenv("CITY_RUS") + str(round(temperature)) + " градусов Цельсия")
+    speaker.speak("Ощущается как " + str(round(temperature_feels_like)) + " градусов Цельсия")
+    speaker.speak("Скорость ветра " + str(round(wind_speed)) + " метров в секунду")
+    speaker.speak("Давление " + str(pressure) + " миллиметра ртутного столба")
 
 
 def listen():
     try:
-        is_working_mode = False
-
         global q
         q = queue.Queue()
-        with sd.RawInputStream(samplerate=44100, blocksize=8000, device=None, dtype='int16', channels=1, callback=callback):
+        with sd.RawInputStream(samplerate=44100, blocksize=8000, device=None, dtype='int16', channels=1,
+                               callback=callback):
             print('#' * 10, 'Switching to listen mode. Press Ctrl+C to exit', '#' * 10)
 
             recognizer = vosk.KaldiRecognizer(model, 44100)
@@ -88,16 +81,6 @@ def listen():
 is_working_mode = False
 
 if __name__ == '__main__':
-    rate = tts.getProperty('rate')  # Скорость произношения
-    tts.setProperty('rate', rate-40)
-
-    volume = tts.getProperty('volume')  # Громкость голоса
-    tts.setProperty('volume', volume+0.9)
-
-    voices = tts.getProperty('voices')
-
-    # Задать голос по умолчанию
-    tts.setProperty('voice', 'ru')
 
     load_dotenv()
 
@@ -107,14 +90,14 @@ if __name__ == '__main__':
 
         if "очнись" in text:
             is_working_mode = True
-            speak("Слушаю")
+            speaker.speak("Слушаю")
             continue
 
         if "отбой" in text:
             is_working_mode = False
-            speak("Отключаюсь")
+            speaker.speak("Отключаюсь")
             continue
 
         if is_working_mode:
-           if "погод" in text:
-               get_weather_info()
+            if "погод" in text:
+                get_weather_info()
