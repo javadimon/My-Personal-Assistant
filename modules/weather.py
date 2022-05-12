@@ -1,8 +1,8 @@
 import speaker
 import os
 from termcolor import colored
-from pyowm import OWM  # использование OpenWeatherMap для получения данных о погоде
-from dotenv import load_dotenv  # загрузка информации из .env-файла
+from pyowm import OWM
+from dotenv import load_dotenv
 
 load_dotenv()
 
