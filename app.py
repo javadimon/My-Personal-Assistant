@@ -1,20 +1,12 @@
-import argparse
-from ast import Global
 import os
 import queue
-import dotenv
 import sounddevice as sd
 import vosk
 import sys
 import json
 import time
-
 import speaker
-import speaker as sreaker
-from dotenv import load_dotenv  # загрузка информации из .env-файла
-from pyowm import OWM  # использование OpenWeatherMap для получения данных о погоде
-# вывод цветных логов (для выделения распознанной речи)
-from termcolor import colored
+from modules import weather
 
 model = vosk.Model(
     "C:\\PythonProjects\\My-Personal-Assitant\\vosk-model-small-ru-0.22")
@@ -25,34 +17,6 @@ def callback(indata, frames, time, status):
     if status:
         print(status, file=sys.stderr)
     q.put(bytes(indata))
-
-
-def get_weather_info():
-    weather_api_key = os.getenv("WEATHER_API_KEY")
-    open_weather_map = OWM(weather_api_key)
-
-    weather_manager = open_weather_map.weather_manager()
-    observation = weather_manager.weather_at_place(os.getenv("CITY"))
-    weather = observation.weather
-    print(weather)
-
-    status = weather.detailed_status
-    temperature = weather.temperature('celsius')["temp"]
-    temperature_feels_like = weather.temperature('celsius')["feels_like"]
-    wind_speed = weather.wind()["speed"]
-    pressure = int(weather.pressure["press"] / 1.333)
-
-    # вывод логов
-    print(colored("Weather in " + os.getenv("CITY") +
-                  ":\n * Status: " + status +
-                  "\n * Wind speed (m/sec): " + str(wind_speed) +
-                  "\n * Temperature (Celsius): " + str(temperature) +
-                  "\n * Pressure (mm Hg): " + str(pressure), "yellow"))
-
-    speaker.speak("Температура воздуха в городе " + os.getenv("CITY_RUS") + str(round(temperature)) + " градусов Цельсия")
-    speaker.speak("Ощущается как " + str(round(temperature_feels_like)) + " градусов Цельсия")
-    speaker.speak("Скорость ветра " + str(round(wind_speed)) + " метров в секунду")
-    speaker.speak("Давление " + str(pressure) + " миллиметра ртутного столба")
 
 
 def listen():
@@ -82,8 +46,6 @@ is_working_mode = False
 
 if __name__ == '__main__':
 
-    load_dotenv()
-
     while True:
 
         text = listen()
@@ -100,4 +62,4 @@ if __name__ == '__main__':
 
         if is_working_mode:
             if "погод" in text:
-                get_weather_info()
+                weather.get_weather_info()
