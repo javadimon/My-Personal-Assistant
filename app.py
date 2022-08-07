@@ -9,7 +9,7 @@ import speaker
 from modules import weather
 
 model = vosk.Model(
-    "C:\\PythonProjects\\My-Personal-Assitant\\vosk-model-small-ru-0.22")
+    "C:\\PythonProjects\\Assistant\\my-personal-assitant\\vosk-model-small-ru-0.22")
 
 
 def callback(indata, frames, time, status):
